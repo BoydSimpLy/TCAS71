@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📚 TCAS71 Master Planner — Dek71</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Segoe UI',Tahoma,sans-serif;background:#0a0a14;min-height:100vh;color:#e0e0e0;padding:12px}
+.ctn{max-width:1600px;margin:0 auto}
+h1{text-align:center;font-size:1.7rem;margin-bottom:4px;background:linear-gradient(90deg,#f093fb,#f5576c,#feca57,#48dbfb);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.sub{text-align:center;color:#777;margin-bottom:16px;font-size:.8rem}
+/* Top Nav */
+.tnav{display:flex;justify-content:center;gap:8px;margin-bottom:16px;flex-wrap:wrap;align-items:center}
+.tbtn{padding:9px 22px;border:2px solid rgba(255,255,255,.08);border-radius:25px;background:transparent;color:#aaa;cursor:pointer;font-size:.85rem;font-weight:700;transition:all .2s}
+.tbtn:hover{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.15)}
+.tbtn.act{background:linear-gradient(135deg,#6c5ce7,#a29bfe);border-color:#6c5ce7;color:#fff}
+.abtn{margin-left:auto;display:flex;gap:8px}
+.sv{padding:7px 16px;border:none;border-radius:18px;background:#27ae60;color:#fff;cursor:pointer;font-size:.78rem;font-weight:600;transition:all .2s}
+.sv:hover{background:#2ecc71;transform:scale(1.05)}.sv.us{background:#e67e22;animation:ps 1.5s infinite}
+.rs{padding:7px 16px;border:none;border-radius:18px;background:#c0392b;color:#fff;cursor:pointer;font-size:.78rem;font-weight:600;transition:all .2s}
+.rs:hover{background:#e74c3c;transform:scale(1.05)}
+@keyframes ps{0%,100%{opacity:1}50%{opacity:.6}}
+/* Dashboard */
+.dash{display:grid;grid-template-columns:repeat(auto-fit,minmax(110px,1fr));gap:8px;margin-bottom:16px}
+.dc{background:rgba(255,255,255,.04);border-radius:10px;padding:10px;text-align:center;border:1px solid rgba(255,255,255,.05)}
+.dc .dl{font-size:.63rem;color:#888}.dc .dv{font-size:1.2rem;font-weight:800;margin:2px 0}.dc .db{height:3px;background:rgba(255,255,255,.07);border-radius:2px;overflow:hidden}.dc .df{height:100%;border-radius:2px;transition:width .4s}
+/* Sections */
+.sec{display:none}.sec.act{display:block}
+/* CHECKLIST */
+.ctabs{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap;justify-content:center}
+.ctab{padding:6px 14px;border:none;border-radius:18px;cursor:pointer;font-size:.75rem;font-weight:600;background:rgba(255,255,255,.06);color:#aaa;transition:all .2s}
+.ctab:hover{background:rgba(255,255,255,.1)}
+.ctab.act{color:#fff}
+.ct-math.act{background:#e74c3c}.ct-phys.act{background:#3498db}.ct-chem.act{background:#f39c12}.ct-bio.act{background:#27ae60}.ct-eng.act{background:#9b59b6}.ct-tpat.act{background:#e67e22}.ct-thai.act{background:#1abc9c}.ct-soc.act{background:#e91e63}.ct-tgat.act{background:#00b894}.ct-tpat3.act{background:#6c5ce7}
+.cfilts{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.cflt{padding:4px 10px;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:transparent;color:#aaa;cursor:pointer;font-size:.7rem;transition:all .2s}
+.cflt:hover,.cflt.act{background:rgba(255,255,255,.08);border-color:#48dbfb;color:#48dbfb}
+.ccat{margin-bottom:18px}
+.cch{display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;margin-bottom:6px}
+.cct{font-size:.9rem;font-weight:700;flex:1}.ccb{padding:3px 8px;border-radius:10px;font-size:.65rem;font-weight:600;color:#fff}
+.be{background:#27ae60}.bm{background:#f39c12}.bh{background:#e74c3c}
+.ccp{font-size:.73rem;color:#888}
+.cpb{height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-bottom:6px}
+.cpf{height:100%;border-radius:2px;transition:width .4s}
+.fe{background:#27ae60}.fm{background:#f39c12}.fh{background:#e74c3c}
+.ci{display:flex;align-items:flex-start;gap:8px;padding:7px 10px;margin-bottom:3px;border-radius:5px;transition:background .15s}
+.ci:hover{background:rgba(255,255,255,.03)}
+.ci input[type=checkbox]{width:16px;height:16px;min-width:16px;margin-top:2px;cursor:pointer;accent-color:#48dbfb}
+.ci label{cursor:pointer;line-height:1.3;flex:1;font-size:.78rem}
+.ci.dn label{text-decoration:line-through;color:#555}
+.ci .cd{font-size:.68rem;color:#777;margin-top:1px}
+.ci select{padding:2px 5px;border-radius:4px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:#ccc;font-size:.65rem;cursor:pointer;min-width:75px}
+.ci select option{background:#1a1a2e;color:#e0e0e0}
+/* PLANNER */
+.ptabs{display:flex;gap:5px;margin-bottom:12px;flex-wrap:wrap;justify-content:center}
+.ptab{padding:6px 14px;border:none;border-radius:18px;cursor:pointer;font-size:.75rem;font-weight:600;background:rgba(255,255,255,.06);color:#aaa;transition:all .2s}
+.ptab:hover{background:rgba(255,255,255,.1)}.ptab.act{color:#fff}
+.pvtabs{display:flex;gap:6px;margin-bottom:12px}
+.pvt{padding:4px 10px;border:1px solid rgba(255,255,255,.12);border-radius:12px;background:transparent;color:#aaa;cursor:pointer;font-size:.7rem;transition:all .2s}
+.pvt:hover,.pvt.act{background:rgba(255,255,255,.08);border-color:#48dbfb;color:#48dbfb}
+.spg{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:7px;margin-bottom:12px}
+.spc{background:rgba(255,255,255,.04);border-radius:7px;padding:7px 9px;border-left:3px solid}
+.spc .sn{font-size:.68rem;font-weight:600;margin-bottom:2px}.spc .sb{height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}.spc .sf{height:100%;border-radius:2px;transition:width .4s}.spc .sp{font-size:.6rem;color:#777;margin-top:2px}
+.pmb{margin-bottom:14px;background:rgba(255,255,255,.03);border-radius:9px;padding:11px;border:1px solid rgba(255,255,255,.04)}
+.pmb h4{font-size:.82rem;color:#feca57;margin-bottom:6px}
+.pmbr{height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-bottom:6px}
+.pmbf{height:100%;border-radius:2px;transition:width .4s}
+.pt{display:flex;align-items:center;gap:7px;padding:4px 0;border-bottom:1px solid rgba(255,255,255,.03);font-size:.76rem}
+.pt:last-child{border-bottom:none}
+.pt .pc{width:14px;height:14px;border-radius:50%;border:2px solid rgba(255,255,255,.15);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.pt .pc.ck{background:#27ae60;border-color:#27ae60}.pt .pc.ck::after{content:'✓';color:#fff;font-size:.55rem}
+.pt.dn{opacity:.5}.pt.dn .ptx{text-decoration:line-through}
+.tg{display:inline-block;padding:1px 4px;border-radius:3px;font-size:.58rem;font-weight:600;margin-right:3px}
+.t-math{background:#e74c3c33;color:#ff6b6b}.t-phys{background:#3498db33;color:#74b9ff}.t-chem{background:#f39c1233;color:#fabe7c}.t-bio{background:#27ae6033;color:#7ef9cc}.t-eng{background:#9b59b633;color:#d19dfc}.t-tpat{background:#e67e2233;color:#fdcb6e}.t-thai{background:#1abc9c33;color:#81ecec}.t-soc{background:#e91e6333;color:#fd79a8}.t-tgat{background:#00b89433;color:#55efc4}.t-tpat3{background:#6c5ce733;color:#a29bfe}.t-rest{background:#636e7233;color:#b2bec3}
+/* Week */
+.wnav{display:flex;align-items:center;gap:8px;margin-bottom:8px}
+.wnav button{padding:4px 9px;border:1px solid rgba(255,255,255,.12);border-radius:5px;background:transparent;color:#ccc;cursor:pointer;font-size:.72rem}
+.wnav button:hover{background:rgba(255,255,255,.06)}
+.wgrid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px;margin-bottom:12px}
+.wcell{background:rgba(255,255,255,.03);border-radius:7px;padding:6px 4px;min-height:80px;border:1px solid rgba(255,255,255,.04);cursor:pointer;transition:all .15s}
+.wcell:hover{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.1)}
+.wcell .wdn{font-size:.68rem;font-weight:600;margin-bottom:4px}
+.wcell .wsl{display:flex;align-items:center;gap:3px;margin-bottom:2px;font-size:.56rem}
+.wcell .wdot{width:7px;height:7px;border-radius:50%;border:1.5px solid rgba(255,255,255,.15);flex-shrink:0;cursor:pointer}
+.wcell .wdot.ck{background:#27ae60;border-color:#27ae60}
+/* Daily */
+.dly{background:rgba(255,255,255,.03);border-radius:9px;padding:12px;border:1px solid rgba(255,255,255,.04)}
+.dsl{display:flex;gap:9px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.03);align-items:flex-start}
+.dsl:last-child{border-bottom:none}
+.dsl .dt{font-size:.7rem;color:#888;min-width:70px;padding-top:2px}
+.dsl .dc2{flex:1}
+.dsl .dsn{font-size:.77rem;font-weight:600;margin-bottom:1px}
+.dsl .dsd{font-size:.68rem;color:#aaa}
+.dsl .dck{width:16px;height:16px;border-radius:50%;border:2px solid rgba(255,255,255,.15);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .2s}
+.dsl .dck.ck{background:#27ae60;border-color:#27ae60}.dsl .dck.ck::after{content:'✓';color:#fff;font-size:.6rem}
+/* Misc */
+.ub{position:fixed;top:10px;right:10px;padding:5px 12px;background:rgba(230,126,34,.9);color:#fff;border-radius:7px;font-size:.7rem;z-index:999;display:none}.ub.sh{display:block}
+.st{position:fixed;bottom:12px;right:12px;padding:7px 14px;background:#27ae60;color:#fff;border-radius:7px;font-size:.75rem;opacity:0;transition:opacity .3s;pointer-events:none;z-index:999}.st.sh{opacity:1}
+@media(max-width:768px){.wgrid{grid-template-columns:repeat(2,1fr)}.dash{grid-template-columns:repeat(4,1fr)}}
+</style>
+</head>
+<body>
+<div class="ctn">
+<h1>📚 TCAS71 Master Planner</h1>
+<p class="sub">Checklist เนื้อหา + ตารางอ่านหนังสือ — Dek71 (พ.ศ. 2569–2571)</p>
+<div class="tnav">
+<button class="tbtn act" onclick="switchSec('checklist')" id="btnCL">📋 Checklist เนื้อหา</button>
+<button class="tbtn" onclick="switchSec('planner')" id="btnPL">📅 ตารางอ่านหนังสือ</button>
+<div class="abtn"><button class="sv" id="btnSave" onclick="manualSave()">💾 Save</button><button class="rs" onclick="resetAll()">🗑️ Reset</button></div>
+</div>
+<div class="dash" id="dashEl"></div>
+<div class="sec act" id="secCL"></div>
+<div class="sec" id="secPL"></div>
+</div>
+<div class="ub" id="ubEl">⚠️ ยังไม่ได้บันทึก</div>
+<div class="st" id="stEl">💾 บันทึกแล้ว</div>
+<script>
+
+// ====== SUBJECTS (Checklist Data) ======
+const CL_SUBJECTS=[
+{id:'math',name:'คณิตศาสตร์',icon:'📐',tab:'ct-math',color:'#e74c3c',info:'30 ข้อ 100 คะแนน | 90 นาที (เฉลี่ยข้อละ 3 นาที) | โจทย์ยุค สสวท. ยาวเป็นหน้ากระดาษ เน้นประยุกต์เข้าสถานการณ์จริง — ศึกใหญ่ที่สุดของเด็กสายวิทย์',cats:[
+{g:'easy',title:'บทง่าย ออกบ่อย — ขุมทรัพย์เก็บให้เรียบ (~10-12 ข้อ)',items:[
+{id:'math_stat',l:'สถิติ',d:'ค่ากลาง, การกระจาย, การแจกแจงปกติ (ค่า Z), ส่วนเบี่ยงเบนมาตรฐาน — ~3-4 ข้อ'},
+{id:'math_seq',l:'ลำดับและอนุกรม',d:'เลขคณิต-เรขาคณิต, อนุกรมอนันต์, ดอกเบี้ย/มูลค่าเงิน (ประยุกต์ออกทุกปี) — ~3-4 ข้อ'},
+{id:'math_set_logic_real',l:'เซต, ตรรกศาสตร์, จำนวนจริง + ความสัมพันธ์และฟังก์ชัน',d:'เวนน์-ออยเลอร์, ตารางค่าความจริง, ตัวบ่งปริมาณ, อสมการพหุนาม, โดเมน-เรนจ์, ฟังก์ชันผกผัน — ~3 ข้อ'},
+]},{g:'medium',title:'บทปานกลาง เน้นความรอบคอบ (หลอกเก่ง) (~5-6 ข้อ)',items:[
+{id:'math_explog',l:'เอกซ์โพเนนเชียลและลอการิทึม (Log-Exp)',d:'สมบัติ Log, แก้สมการและอสมการ Expo/Log — ~2 ข้อ'},
+{id:'math_matrix',l:'เมทริกซ์ (Matrix)',d:'หา Det, อินเวอร์ส (A⁻¹), Cramer, Row Operation — ~1-2 ข้อ'},
+{id:'math_vector',l:'เวกเตอร์ (Vector)',d:'Dot (·) และ Cross (×), ขนาดเวกเตอร์, มุมระหว่างเวกเตอร์ — ~1-2 ข้อ'},
+]},{g:'hard',title:'บทสายโหด ออกเยอะ — จุดตัดคนติดคณะท็อป (~12-14 ข้อ)',items:[
+{id:'math_calc_conic',l:'แคลคูลัส + เรขาคณิตวิเคราะห์/ภาคตัดกรวย',d:'ลิมิต, อนุพันธ์ (ค่าสูงสุด-ต่ำสุด), อินทิเกรต (พื้นที่ใต้กราฟ), วงกลม, วงรี, พาราโบลา, ไฮเพอร์โบลา — ~3-4 ข้อทุกปี'},
+{id:'math_prob',l:'ความน่าจะเป็น & ตัวแปรสุ่ม',d:'วิธีนับ (P, C), กฎความน่าจะเป็น, เหตุการณ์อิสระ/ไม่อิสระ, การแจกแจงทวินาม — ~3-4 ข้อ'},
+{id:'math_trig',l:'ฟังก์ชันตรีโกณมิติ',d:'สูตรมุมสองเท่า-สามเท่า, แปลงผลคูณ-ผลบวก, กฎ Sine/Cosine, แก้สมการตรีโกณ — ~2-3 ข้อ'},
+]}]},
+{id:'phys',name:'ฟิสิกส์',icon:'⚡',tab:'ct-phys',color:'#3498db',info:'30 ข้อ 100 คะแนน | 90 นาที (เฉลี่ยข้อละ 3 นาที) | วิชาที่ขยับจากความรู้ในห้องเรียนไปไกลที่สุด เน้นคอนเซปต์+กราฟ+การทดลอง',cats:[
+{g:'easy',title:'บทง่าย ออกบ่อย — ขุมทรัพย์เก็บให้เรียบ (~10-12 ข้อ)',items:[
+{id:'phys_atom_nuc',l:'ฟิสิกส์อะตอมและฟิสิกส์นิวเคลียร์',d:'Photoelectric Effect, ทฤษฎีโบร์, เดอบรอยล์, กัมมันตภาพรังสี, ครึ่งชีวิต, E=Δmc², ฟิชชัน-ฟิวชัน — ~3-4 ข้อ'},
+{id:'phys_wave_light_sound',l:'คลื่น แสง และเสียง',d:'สมบัติคลื่น, สลิตคู่/เดี่ยว/เกรตติง, สเนลล์, ดอปเพลอร์, คลื่นนิ่ง, สั่นพ้อง — ~3-4 ข้อ'},
+{id:'phys_elec_dc',l:'ไฟฟ้าสถิต & ไฟฟ้ากระแสตรง',d:'คูลอมบ์, สนามไฟฟ้า, ศักย์ไฟฟ้า, ตัวเก็บประจุ, V=IR, วงจรอนุกรม-ขนาน, กำลังไฟฟ้า — ~2-3 ข้อ'},
+]},{g:'medium',title:'บทปานกลาง เน้นความแม่นยำสูตร (~4-5 ข้อ)',items:[
+{id:'phys_shm_rotation',l:'การเคลื่อนที่แบบหมุนและ SHM',d:'ลูกตุ้ม, สปริง, สมการ SHM, การเคลื่อนที่แบบวงกลม — ~2 ข้อ'},
+{id:'phys_nature',l:'ธรรมชาติและทักษะทางฟิสิกส์',d:'หน่วย SI, ความคลาดเคลื่อน, นัยสำคัญ, เวกเตอร์เบื้องต้น — ~1 ข้อ'},
+]},{g:'hard',title:'บทสายโหด ออกเยอะ — ด่านปราบเซียน (~12-14 ข้อ)',items:[
+{id:'phys_mechanics',l:'กลุ่มกลศาสตร์',d:'เคลื่อนที่แนวตรง (5 สูตร), กฎนิวตัน, แรงเสียดทาน, โปรเจกไทล์, สมดุลกล, งาน-พลังงาน, โมเมนตัม-การชน — ~5-7 ข้อ'},
+{id:'phys_ac_em',l:'ไฟฟ้ากระแสสลับ & คลื่นแม่เหล็กไฟฟ้า',d:'F=qvBsinθ, ฟาราเดย์, เลนซ์, ค่า RMS, หม้อแปลง, สเปกตรัมคลื่นแม่เหล็กไฟฟ้า — ~2 ข้อ'},
+{id:'phys_material_heat',l:'สมบัติเชิงกลของสาร/ของไหล & ความร้อนและแก๊ส',d:'มอดุลัสของยัง, ความดันของไหล, แบร์นูลลี, Q=mcΔT, PV=nRT, ทฤษฎีจลน์, อุณหพลศาสตร์ — ~2-3 ข้อ'},
+]}]},
+{id:'chem',name:'เคมี',icon:'⚗️',tab:'ct-chem',color:'#f39c12',info:'30 ข้อ 100 คะแนน | 90 นาที (เฉลี่ยข้อละ 3 นาที) | ต้องแข่งกับเวลา การเลือกเก็บบทง่าย/ออกบ่อยคือกลยุทธ์สำคัญ',cats:[
+{g:'easy',title:'บทง่าย ออกบ่อย (~10-12 ข้อ)',items:[
+{id:'chem_atom',l:'โครงสร้างอะตอมและสมบัติของธาตุ',d:'การจัดเรียงอิเล็กตรอน (Subshell/Orbital), แนวโน้มตารางธาตุ (IE, EA, EN, ขนาด) — ~3-4 ข้อ'},
+{id:'chem_bond',l:'พันธะเคมี',d:'Ionic, Covalent, Metallic, รูปร่างโมเลกุล, สภาพขั้ว, แรงยึดเหนี่ยวระหว่างโมเลกุล — ~3-4 ข้อ'},
+{id:'chem_organic',l:'เคมีอินทรีย์',d:'IUPAC, ไอโซเมอร์, ปฏิกิริยาสารอินทรีย์ (เผาไหม้, ฟอกจางสี, Esterification), Reaction Roadmap — ~3-4 ข้อ'},
+]},{g:'medium',title:'บทกลาง เน้นจำ/เก็บบล็อกคะแนน (~4-6 ข้อ)',items:[
+{id:'chem_gas',l:'แก๊สและสมบัติของแก๊ส',d:'กฎของแก๊สอุดมคติ (PV=nRT), กฎของดาลตัน, แก๊สผสม — ~1-2 ข้อ'},
+{id:'chem_kinetics',l:'อัตราการเกิดปฏิกิริยาเคมี',d:'ปัจจัยที่มีผล (พื้นที่ผิว, ความเข้มข้น, อุณหภูมิ, ตัวเร่ง), ทฤษฎีการชน, กราฟ Ea — ~1-2 ข้อ'},
+{id:'chem_polymer',l:'พอลิเมอร์',d:'Addition vs Condensation, โครงสร้างและสมบัติ, พลาสติกรีไซเคิล — ~1-2 ข้อ'},
+]},{g:'hard',title:'บทสายโหด ออกโหด (~10-12 ข้อ)',items:[
+{id:'chem_stoic',l:'ปริมาณสารสัมพันธ์',d:'ดุลสมการ, โมล, Limiting Reagent, % Yield, Factor-Label Method — ~3-4 ข้อ'},
+{id:'chem_equi',l:'สมดุลเคมี',d:'Kc, Kp, หลักเลอชาเตอลิเย (เปลี่ยนความเข้มข้น/ความดัน/อุณหภูมิ) — ~2 ข้อ'},
+{id:'chem_acid',l:'กรด-เบส',d:'pH, pOH, กรดแก่/อ่อน, การไทเทรต (จุดยุติ/สมมูล), บัฟเฟอร์ — ~3-4 ข้อ'},
+{id:'chem_electro',l:'เคมีไฟฟ้า',d:'รีดอกซ์, เซลล์กัลวานิก (E°cell), เซลล์อิเล็กโทรลิติก, การป้องกันกัดกร่อน — ~2 ข้อ'},
+]}]},
+{id:'bio',name:'ชีววิทยา',icon:'🧬',tab:'ct-bio',color:'#27ae60',info:'40 ข้อ 100 คะแนน | 90 นาที | เนื้อหาเยอะมหาศาล (~5 เล่ม 20+ บท) แต่ข้อสอบยุค สสวท. เน้นวิเคราะห์แล็บ กราฟ การทดลอง (Experimental Biology)',cats:[
+{g:'easy',title:'บทง่าย ออกบ่อย — ขุมทรัพย์ห้ามเท (~7-10 ข้อ)',items:[
+{id:'bio_eco',l:'ระบบนิเวศและประชากร (Ecology)',d:'ไบโอม, ความสัมพันธ์ของสิ่งมีชีวิต, การถ่ายทอดพลังงาน, ประชากรศาสตร์ — ~3-4 ข้อ'},
+{id:'bio_behavior',l:'พฤติกรรมสัตว์',d:'Innate behavior, Learned behavior, การสื่อสาร — ~1-2 ข้อ'},
+{id:'bio_chem_cell',l:'เคมีพื้นฐานของสิ่งมีชีวิตและเซลล์',d:'คาร์โบไฮเดรต, โปรตีน, ลิพิด, เอนไซม์, ออร์แกเนลล์, การลำเลียงสาร — ~3-4 ข้อ'},
+]},{g:'medium',title:'บทปานกลาง เน้นความละเอียด (~6-8 ข้อ)',items:[
+{id:'bio_plant',l:'กลุ่มวิชาพืช (Plant Biology)',d:'โครงสร้างราก-ลำต้น-ใบ, การลำเลียง, สังเคราะห์แสง (Light/Calvin, C3/C4/CAM), สืบพันธุ์พืช, ฮอร์โมนพืช — ~4-5 ข้อ'},
+{id:'bio_taxonomy',l:'อนุกรมวิธานและความหลากหลายทางชีวภาพ',d:'อาณาจักร 5 อาณาจักร, ไวรัส, เกณฑ์จำแนก, ลักษณะเด่น — ~2-3 ข้อ'},
+]},{g:'hard',title:'บทสายโหด ออกเยอะ — จุดตัดคนติดแพทย์ (~14-19 ข้อ)',items:[
+{id:'bio_genetics',l:'พันธุศาสตร์และการแสดงออกของยีน',d:'Mendel, Extension, DNA Replication, Transcription, Translation, เทคโนโลยี DNA, การแบ่งเซลล์ — ~5-7 ข้อ'},
+{id:'bio_body',l:'ระบบร่างกายสัตว์และมนุษย์',d:'ย่อยอาหาร, หมุนเวียนเลือด, ภูมิคุ้มกัน, ขับถ่าย, ประสาท, ต่อมไร้ท่อ, สืบพันธุ์, เคลื่อนที่ — ~6-8 ข้อ'},
+{id:'bio_respiration',l:'การสังเคราะห์ด้วยแสงและการหายใจระดับเซลล์',d:'Glycolysis, Krebs cycle, ETC, Light reaction, Calvin cycle — ~3-4 ข้อ'},
+]}]},
+{id:'eng',name:'อังกฤษ',icon:'🌐',tab:'ct-eng',color:'#9b59b6',info:'80 ข้อ 100 คะแนน | 90 นาที (เฉลี่ยข้อละ 1 นาที 7 วินาที!) | วิชาบังคับทุกสาย ความท้าทายคือ "โจทย์ยาว อ่านไม่ทัน คำศัพท์หลอกเก่ง"',cats:[
+{g:'easy',title:'บทง่าย ออกบ่อย — ขุมทรัพย์โกยคะแนนด่วน (~20 ข้อ)',items:[
+{id:'eng_dialogue',l:'Situational Dialogues (บทสนทนาตามสถานการณ์)',d:'Short/Long Conversation, การตอบสนองตามสถานการณ์, Idioms & Expressions, การแสดงความยินดี/ปลอบใจ/ปฏิเสธสุภาพ — ~20 ข้อ'},
+]},{g:'medium',title:'บทปานกลาง วัดกึ๋น (ต้องมีสูตร+คลังศัพท์) (~20-25 ข้อ)',items:[
+{id:'eng_textcomp',l:'Text Completion (เติมคำในช่องว่าง / Cloze Test)',d:'เลือกศัพท์/ไวยากรณ์ที่ถูกต้องเติมในบทความ — Tenses, S-V Agreement, Connectors, Non-finite Verbs, Relative Clause — ~15 ข้อ'},
+{id:'eng_para',l:'Paragraph Organization (เรียงประโยค)',d:'นำ 5 ประโยคมาเรียงลำดับให้เป็นพารากราฟสละสลวย ดูคำเชื่อม+สรรพนาม — ~5 ข้อ'},
+]},{g:'hard',title:'บทสายโหด กินเวลา — จุดตัดคนได้ 70+ (~35-40 ข้อ)',items:[
+{id:'eng_reading',l:'Reading Comprehension (การอ่านจับใจความ)',d:'บทความยาว/โฆษณา/กราฟ/ข่าว — หา Main Idea, Context Clues, Inference, Author Purpose & Tone, Fact vs Opinion — ~35-40 ข้อ (ครึ่งหนึ่งของข้อสอบ!)'},
+]}]},
+{id:'tpat',name:'TPAT1 (แพทย์)',icon:'🩺',tab:'ct-tpat',color:'#e67e22',info:'300 คะแนน (3 ฉบับ ฉบับละ 100) | คิดเป็น 30% ในระบบ TCAS กสพท | วิชาเฉพาะแพทย์ที่ต้องใช้ทั้งความจำ ความเร็ว และการวิเคราะห์',cats:[
+{g:'easy',title:'พาร์ทง่าย ต้องเก็บเต็ม — "เชื่อมโยง" ขุมทรัพย์ห้ามพลาด (เป้า 90-100/100)',items:[
+{id:'tpat_symbol',l:'สัญลักษณ์และคีย์เวิร์ดหลัก',d:'เส้น A (ส่งผลโดยตรง/ทำให้เกิด), D (เป็นส่วนประกอบ/คุณสมบัติ), F (ยับยั้ง/ลดลง)'},
+{id:'tpat_group',l:'การจับกลุ่มข้อความ/รหัสลวง',d:'คำที่ความหมายเหมือนแต่ใช้คนละคำ (Synonym ลวง), การเปิด-ปิดรหัสลวง'},
+{id:'tpat_multi',l:'บทความซ้อนบทความ',d:'โยงเส้นข้ามพารากราฟ, ความสัมพันธ์แบบสองชั้น'},
+{id:'tpat_code',l:'การตรวจทานตารางรหัส',d:'เขียนรหัสท้ายข้อสอบให้ถูกต้อง แม่นยำ ไม่สลับตัวเลข — ตกม้าตายบ่อย'},
+]},{g:'medium',title:'พาร์ทปานกลาง เน้นความชัวร์ — "จริยธรรมแพทย์" ด่านสติแตก (เป้า 70+/100)',items:[
+{id:'tpat_4principles',l:'หลักจริยศาสตร์ 4 ประการ',d:'Autonomy (เคารพผู้ป่วย), Beneficence (ทำประโยชน์), Non-maleficence (ไม่ทำอันตราย), Justice (ยุติธรรม)'},
+{id:'tpat_law',l:'กฎหมายทางการแพทย์/สิทธิผู้ป่วย',d:'ความลับผู้ป่วย, Informed Consent, Living Will, การทำแท้งตามกฎหมาย, การรักษาเยาวชน'},
+{id:'tpat_ethics',l:'จริยธรรมทั่วไปและหน้าที่พลเมือง',d:'โซเชียลมีเดียของบุคลากรแพทย์, Conflict of Interest, การประพฤติตัวในสังคม'},
+{id:'tpat_health',l:'ระบบสาธารณสุขและข่าวสาร',d:'บัตรทอง, ประกันสังคม, ข้าราชการ, ปัญหาสาธารณสุขปัจจุบัน'},
+]},{g:'hard',title:'พาร์ทสายโหด ตัวตัดคะแนน — "เชาวน์ปัญญา" ด่านปราบเซียน (ค่าเฉลี่ยประเทศ ~40-50/100)',items:[
+{id:'tpat_math_logic',l:'คณิตศาสตร์ประยุกต์และตรรกศาสตร์',d:'อนุกรมตัวเลข, ร้อยละ-กำไร-ขาดทุน, อัตราส่วน, แรงงาน-เวลา, วิเคราะห์ตาราง/กราฟ, เงื่อนไขเชิงตรรกะ'},
+{id:'tpat_verbal_spatial',l:'จับใจความและมิติสัมพันธ์',d:'สรุปความ (ห้ามคิดเอง), อนุกรมรูปภาพ 2D/3D, หมุน/คลี่กล่อง, ภาษาสื่อสาร, อุปมาอุปไมย'},
+]}]},
+{id:'tgat',name:'TGAT',icon:'🧠',tab:'ct-tgat',color:'#00b894',cats:[
+{g:'easy',title:'บทพื้นฐานเก็บง่าย (TGAT1+TGAT3)',items:[
+{id:'tgat_speak',l:'TGAT1: Speaking Skills',d:'Question-Response, Short/Long Conversation, Idioms'},
+{id:'tgat_read',l:'TGAT1: Reading Skills',d:'Text Completion, Reading Comprehension, Context Clues'},
+{id:'tgat3_value',l:'TGAT3: สร้างคุณค่า/นวัตกรรม',d:'Analytical Thinking, Problem Solving, Creativity'},
+{id:'tgat3_problem',l:'TGAT3: แก้ปัญหาซับซ้อน',d:'ระบุปัญหา, วิเคราะห์ข้อมูล, ตัดสินใจ'},
+{id:'tgat3_eq',l:'TGAT3: บริหารอารมณ์',d:'Self-Awareness, Empathy, ควบคุมอารมณ์'},
+{id:'tgat3_civic',l:'TGAT3: พลเมืองมีส่วนร่วม',d:'ทำงานเป็นทีม, รับผิดชอบสังคม'},
+]},{g:'medium',title:'บทออกเยอะ (TGAT2: ตัวเลข+ภาษา)',items:[
+{id:'tgat2_summary',l:'จับใจความ/สรุปความ',d:'เลือกข้อสรุปที่ถูกต้อง (ห้ามคิดเอง)'},
+{id:'tgat2_opposite',l:'คำตรงข้าม/คำพวกเดียวกัน',d:'คลังศัพท์ภาษาไทย'},
+{id:'tgat2_analogy',l:'อุปมาอุปไมย',d:'ความสัมพันธ์ของคำ'},
+{id:'tgat2_series',l:'อนุกรมตัวเลข',d:'อนุกรมสะสม, เว้นระยะ'},
+{id:'tgat2_math',l:'คณิตศาสตร์ประยุกต์',d:'ร้อยละ, อัตราส่วน, สมการอายุ, แรงงาน-เวลา'},
+{id:'tgat2_data',l:'วิเคราะห์ข้อมูล',d:'ตาราง กราฟ แผนภูมิ (ประมาณตัวเลข)'},
+]},{g:'hard',title:'บทสายโหด (TGAT2: มิติสัมพันธ์+ตรรกะ)',items:[
+{id:'tgat2_visual',l:'อนุกรมรูปภาพ',d:'หาภาพถัดไปจากแนวโน้ม'},
+{id:'tgat2_3d',l:'หมุน/พับรูปทรง 3D',d:'คลี่กล่อง, ภาพสะท้อน, ภาพต่างจากพวก'},
+{id:'tgat2_logic',l:'ตรรกศาสตร์สัญลักษณ์',d:'ถ้า A แล้ว B, ทุกคนเป็น..., บางคนเป็น...'},
+{id:'tgat2_cond',l:'วิเคราะห์เงื่อนไข',d:'จัดที่นั่ง, สืบพยาน, เรียงลำดับ (Speed Test!)'},
+]}]},
+{id:'tpat3',name:'TPAT3 (วิศวะ)',icon:'⚙️',tab:'ct-tpat3',color:'#6c5ce7',info:'70 ข้อ 100 คะแนน | 180 นาที | Speed Test — ไม่ยากที่เนื้อหา แต่โหดที่ความถึกและเวลาจำกัดจนทำไม่ทัน',cats:[
+{g:'easy',title:'บทง่าย ออกบ่อย — ขุมทรัพย์แจกแต้ม ห้ามเท (เก็บ 80%+)',items:[
+{id:'tp3_spatial',l:'พาร์ทมิติสัมพันธ์ (Spatial Relation)',d:'หมุน/พลิก 3D, พับกล่อง/คลี่แผ่นโลหะ, นับบล็อก/ลูกบาศก์, ภาพ 3 ด้าน (Orthographic) — มองปุ๊บตอบปั๊บ ~15-20 ข้อ'},
+{id:'tp3_tech',l:'ความรู้รอบตัวด้าน วิทยาศาสตร์ เทคโนโลยี นวัตกรรม',d:'EV, AI, Cloud, Cybersecurity, พลังงานสะอาด, ขยะเทคโนโลยี, ข่าวสารเทคโนโลยีปัจจุบัน — ~10-15 ข้อ'},
+]},{g:'medium',title:'บทกลาง เน้นความเข้าใจเชิงกระบวนการ (ห้ามสะเพร่า) (~10-15 ข้อ)',items:[
+{id:'tp3_sci_process',l:'การคิดเชิงวิทยาศาสตร์ เทคโนโลยี และวิศวกรรม',d:'กระบวนการทางวิทยาศาสตร์ (ตั้งสมมติฐาน, ตัวแปร, แปลความตาราง), Flowchart/Pseudocode, Logic Gates (AND/OR/NOT), Loop & Condition — ~10-15 ข้อ'},
+]},{g:'hard',title:'บทสายโหด กินเวลาลากเลือด — จุดตัดคนสอบติดเกียร์วิศวะ',items:[
+{id:'tp3_quant',l:'เชาวน์ปัญญาและการแก้ปัญหาเชิงปริมาณ (คณิตประยุกต์)',d:'อนุกรมตัวเลข, ร้อยละ, อัตราส่วน, สมการ, วิเคราะห์ข้อมูลตาราง/กราฟ, เงื่อนไขเชิงตรรกะ — ไม่ยากแต่ถึก ~15-20 ข้อ'},
+{id:'tp3_mech',l:'ความรู้เชิงวิศวกรรม (กลศาสตร์ พลังงาน โครงสร้าง)',d:'คำนวณคาน, รอก, คานดีดคานงัด, ล้อและเพลา, ฟันเฟือง, สายพาน, วงจรไฟฟ้า, ของไหล/ความดัน — ออกคำนวณจริง'},
+]}]},
+{id:'thai',name:'ภาษาไทย',icon:'🇹🇭',tab:'ct-thai',color:'#1abc9c',cats:[
+{g:'easy',title:'บทง่าย ออกบ่อย — ขุมทรัพย์โกยคะแนนด่วน (~20-25 ข้อ)',items:[
+{id:'thai_main',l:'การจับใจความสำคัญ / จุดประสงค์ของข้อความ',d:'ออกเยอะที่สุดในข้อสอบ (เกือบครึ่งหนึ่งของพาร์ทการอ่าน) — หาประเด็นหลัก, จุดประสงค์ผู้เขียน, ตั้งชื่อเรื่อง'},
+{id:'thai_infer',l:'การอนุมาน',d:'คาดคะเนความคิดผู้เขียนจากข้อมูลที่มีอยู่, ข้อใดสรุปได้/ไม่ได้ — ออก 3-5 ข้อทุกปี'},
+{id:'thai_idiom',l:'สำนวน คำพังเพย และการใช้คำให้ตรงความหมาย',d:'เลือกใช้ตรงสถานการณ์, ตีความคำศัพท์ในบริบทต่าง ๆ — ออก 2-3 ข้อ'},
+]},{g:'medium',title:'บทกลาง เน้นทริคการจำ (บล็อกคะแนนตายตัว) (~5-8 ข้อ)',items:[
+{id:'thai_order',l:'การเรียงลำดับข้อความ',d:'จัดเรียง 4-5 ประโยคให้ต่อเนื่อง ดูคำเชื่อม+สรรพนาม — 2-3 ข้อ'},
+{id:'thai_write',l:'วิธีการเขียน',d:'โครงสร้างการเขียน คำนำ-เนื้อเรื่อง-สรุป, การเขียนบรรณานุกรม — 1-2 ข้อ'},
+{id:'thai_fact',l:'ข้อเท็จจริง VS ข้อคิดเห็น',d:'แยก Fact vs Opinion, วิเคราะห์ความน่าเชื่อถือ — 1-2 ข้อ'},
+]},{g:'hard',title:'บทสายโหด กินเวลา — จุดตัดคะแนน 80+ (~15-20 ข้อ)',items:[
+{id:'thai_tone',l:'การจำแนกเจตนา น้ำเสียง และทรรศนะของผู้เขียน',d:'ประชดประชัน, เห็นใจ, แนะนำ, ตักเตือน, โน้มน้าว — ต้องอ่านระหว่างบรรทัด'},
+{id:'thai_logic',l:'การคิดเชิงเหตุผล และการโต้แย้ง',d:'ระบุเหตุ-ผล, ข้อสนับสนุน-ข้อโต้แย้ง, การให้เหตุผลที่สมเหตุสมผล'},
+{id:'thai_royal',l:'ราชาศัพท์ และระดับภาษา (พาร์ทหลักภาษา)',d:'ทางการ/กึ่งทางการ/ปาก, ราชาศัพท์ที่ใช้กับพระมหากษัตริย์-พระสงฆ์-สามัญชน'},
+]}]},
+{id:'soc',name:'สังคมศึกษา',icon:'🌍',tab:'ct-soc',color:'#e91e63',cats:[
+{g:'easy',title:'บทง่าย ออกบ่อย — ขุมทรัพย์โกยคะแนนตุน (~15-20 ข้อ)',items:[
+{id:'soc_econ',l:'เศรษฐศาสตร์ (Economics)',d:'กลไกราคา (อุปสงค์/อุปทาน), เศรษฐกิจมหภาค (เงินเฟ้อ-ฝืด, GDP, นโยบายการเงิน/การคลัง), เศรษฐกิจระหว่างประเทศ (ASEAN, EU, FTA) — ~10 ข้อ'},
+{id:'soc_civic',l:'หน้าที่พลเมือง วัฒนธรรม และการดำเนินชีวิตในสังคม',d:'กฎหมาย (แพ่ง, อาญา), ระบอบการเมือง (ประชาธิปไตย vs เผด็จการ, รัฐธรรมนูญไทย), วัฒนธรรมและสังคมวิทยา — ~10 ข้อ'},
+]},{g:'medium',title:'บทปานกลาง เน้นทริคและสติ (ดักคีย์เวิร์ด) (~10 ข้อ)',items:[
+{id:'soc_religion',l:'ศาสนา ศีลธรรม และจริยธรรม',d:'หลักธรรมสำคัญ (พุทธ/คริสต์/อิสลาม), ศาสดา, คัมภีร์, พิธีกรรม, การบริหารจิต, หน้าที่ศาสนิกชน — ~10 ข้อ'},
+]},{g:'hard',title:'บทสายโหด ออกกว้าง — จุดตัดคนได้ 60+ (ค่าเฉลี่ยประเทศ ~30 คะแนน) (~15-20 ข้อ)',items:[
+{id:'soc_history',l:'ประวัติศาสตร์ (ไทยและสากล)',d:'อารยธรรมโบราณ, ยุคกลาง, Renaissance, สงครามโลก, สงครามเย็น, ร.5 ปฏิรูป, 2475, วิธีการทางประวัติศาสตร์ — ~10 ข้อ'},
+{id:'soc_geo',l:'ภูมิศาสตร์ (Geopolitics & ภัยพิบัติ)',d:'พิกัด, Time Zone, GIS, เอลนีโญ-ลานีญา, โลกร้อน, ความตกลงปารีส, ภูมิประเทศ-ภูมิอากาศโลก — ~10 ข้อ'},
+]}]}
+];
+
+// ====== PLANNER DATA ======
+const PL_SUBJECTS=[
+{id:'math',name:'คณิตศาสตร์',icon:'📐',color:'#e74c3c',tc:'t-math'},
+{id:'phys',name:'ฟิสิกส์',icon:'⚡',color:'#3498db',tc:'t-phys'},
+{id:'chem',name:'เคมี',icon:'⚗️',color:'#f39c12',tc:'t-chem'},
+{id:'bio',name:'ชีววิทยา',icon:'🧬',color:'#27ae60',tc:'t-bio'},
+{id:'eng',name:'อังกฤษ',icon:'🌐',color:'#9b59b6',tc:'t-eng'},
+{id:'tpat',name:'TPAT1',icon:'🩺',color:'#e67e22',tc:'t-tpat'},
+{id:'tgat',name:'TGAT',icon:'🧠',color:'#00b894',tc:'t-tgat'},
+{id:'tpat3',name:'TPAT3',icon:'⚙️',color:'#6c5ce7',tc:'t-tpat3'},
+{id:'thai',name:'ภาษาไทย',icon:'🇹🇭',color:'#1abc9c',tc:'t-thai'},
+{id:'soc',name:'สังคม',icon:'🌍',color:'#e91e63',tc:'t-soc'},
+{id:'rest',name:'พักผ่อน',icon:'🛌',color:'#636e72',tc:'t-rest'},
+];
+const PHASES=[
+{id:1,name:'เฟส 1: สร้างฐานราก (ม.5)',badge:'PHASE 1',color:'#27ae60',dt:'พ.ค.69–มี.ค.70'},
+{id:2,name:'เฟส 2: เก็บตก+TPAT1 (ปิดเทอม)',badge:'PHASE 2',color:'#f39c12',dt:'เม.ย.–มิ.ย.70'},
+{id:3,name:'เฟส 3: ลุยโจทย์ (ม.6 เทอม1)',badge:'PHASE 3',color:'#e74c3c',dt:'ก.ค.–พ.ย.70'},
+{id:4,name:'เฟส 4: Mock Exam (โค้งสุดท้าย)',badge:'PHASE 4',color:'#8e44ad',dt:'ธ.ค.70–มี.ค.71'},
+];
+const MD={
+1:[
+{lb:'พ.ค.69',t:[{s:'math',x:'เซต, ตรรกศาสตร์'},{s:'phys',x:'หน่วย, เวกเตอร์'},{s:'chem',x:'โครงสร้างอะตอม'},{s:'bio',x:'เคมีพื้นฐาน'},{s:'eng',x:'เริ่มสะสมศัพท์ 15คำ/วัน'}]},
+{lb:'มิ.ย.69',t:[{s:'math',x:'ฟังก์ชัน, จำนวนจริง'},{s:'phys',x:'เคลื่อนที่แนวตรง (5 สูตร)'},{s:'chem',x:'ตารางธาตุ'},{s:'bio',x:'โครงสร้างเซลล์'},{s:'eng',x:'Conversation + Synonym'}]},
+{lb:'ก.ค.69',t:[{s:'math',x:'สถิติ (ค่ากลาง, การกระจาย)'},{s:'phys',x:'แรง, กฎนิวตัน'},{s:'chem',x:'พันธะเคมี'},{s:'bio',x:'การลำเลียงสาร'},{s:'eng',x:'Grammar: Tenses & Voice'}]},
+{lb:'ส.ค.69',t:[{s:'math',x:'สถิติ (การแจกแจงปกติ, ค่า Z)'},{s:'phys',x:'แรงเสียดทาน, แรงดึงดูด'},{s:'chem',x:'รูปร่างโมเลกุล, แรงยึดเหนี่ยว'},{s:'bio',x:'การแบ่งเซลล์'},{s:'eng',x:'Grammar: S-V Agreement'}]},
+{lb:'ก.ย.69',t:[{s:'math',x:'ความน่าจะเป็น'},{s:'phys',x:'งาน-พลังงาน'},{s:'chem',x:'โมลและสูตรเคมี'},{s:'bio',x:'พันธุศาสตร์ (Mendel)'},{s:'eng',x:'Reading: Main Idea'},{s:'tgat',x:'เริ่ม TGAT2: อนุกรม, อุปมา'}]},
+{lb:'ต.ค.69 (ปิดเทอม)',t:[{s:'math',x:'★ ทบทวนบททำเงิน'},{s:'phys',x:'ทบทวนกลศาสตร์'},{s:'chem',x:'ทบทวน: อะตอม,พันธะ,โมล'},{s:'bio',x:'ทบทวน: เซลล์,พันธุศาสตร์'},{s:'eng',x:'ซ้อม Reading จับเวลา'},{s:'tgat',x:'TGAT2: คณิตประยุกต์'},{s:'tpat3',x:'เริ่ม: มิติสัมพันธ์ 3D, พับกล่อง'}]},
+{lb:'พ.ย.69',t:[{s:'math',x:'จำนวนจริง'},{s:'phys',x:'โมเมนตัม, การชน'},{s:'chem',x:'สารละลาย'},{s:'bio',x:'DNA Replication'},{s:'eng',x:'Relative Clause, Connectors'},{s:'tgat',x:'TGAT2: มิติสัมพันธ์ (รูปภาพ, หมุน)'}]},
+{lb:'ธ.ค.69',t:[{s:'math',x:'Expo & Log'},{s:'phys',x:'โปรเจกไทล์, วงกลม'},{s:'chem',x:'ปริมาณสารสัมพันธ์'},{s:'bio',x:'Translation, เทคโนโลยี DNA'},{s:'eng',x:'ศัพท์ ~1,500 คำ ✓'},{s:'tgat',x:'TGAT2: ตรรกะ (เงื่อนไข, จัดที่นั่ง)'},{s:'tpat3',x:'เชิงกล: รอก-คาน, เฟือง'}]},
+{lb:'ม.ค.70',t:[{s:'math',x:'ตรีโกณมิติ'},{s:'phys',x:'สมดุลกล'},{s:'chem',x:'อัตราการเกิดปฏิกิริยา'},{s:'bio',x:'ระบบย่อยอาหาร'},{s:'eng',x:'Reading: Inference'},{s:'tpat3',x:'ภาพ 3 ด้าน (Orthographic)'}]},
+{lb:'ก.พ.70',t:[{s:'math',x:'ลำดับ-อนุกรม'},{s:'phys',x:'SHM'},{s:'chem',x:'สมดุลเคมี'},{s:'bio',x:'ระบบหมุนเวียนเลือด'},{s:'eng',x:'Writing: Text Completion'},{s:'tgat',x:'TGAT3: สมรรถนะทำงาน'},{s:'tpat3',x:'Flowchart + Logic Gates'}]},
+{lb:'มี.ค.70',t:[{s:'math',x:'อนุกรมอนันต์, ดอกเบี้ย'},{s:'phys',x:'คลื่น, เสียง'},{s:'chem',x:'ทบทวน Stoich'},{s:'bio',x:'ระบบประสาท, ต่อมไร้ท่อ'},{s:'eng',x:'ศัพท์ ~3,000 คำ ✓'},{s:'tgat',x:'TGAT1: ซ้อม Speaking+Reading'},{s:'tpat3',x:'ข่าวเทคโนโลยี (AI, EV)'}]},
+],
+2:[
+{lb:'เม.ย.70 (ปิดเทอมใหญ่)',t:[{s:'math',x:'แคลคูลัส (ลิมิต, อนุพันธ์)'},{s:'phys',x:'ไฟฟ้าสถิต'},{s:'chem',x:'เคมีอินทรีย์'},{s:'bio',x:'พืช: โครงสร้าง, ลำเลียง'},{s:'tpat',x:'เชื่อมโยง 1 บทความ/สัปดาห์'},{s:'tgat',x:'TGAT2: Mock จับเวลา 60 นาที'},{s:'tpat3',x:'ซ้อมเชิงกล+มิติสัมพันธ์ รวม'}]},
+{lb:'พ.ค.70',t:[{s:'math',x:'แคลคูลัส (อินทิเกรต)'},{s:'phys',x:'ไฟฟ้ากระแสตรง'},{s:'chem',x:'กรด-เบส'},{s:'bio',x:'สังเคราะห์แสง'},{s:'tpat',x:'เชาวน์ปัญญา 5-10 ข้อ/วัน'},{s:'eng',x:'ซ้อมข้อสอบเก่าจับเวลา'},{s:'tgat',x:'TGAT3: ข้อสอบเก่า'},{s:'tpat3',x:'Computational Thinking'}]},
+{lb:'มิ.ย.70 (เปิด ม.6)',t:[{s:'math',x:'เมทริกซ์, เวกเตอร์, จำนวนเชิงซ้อน'},{s:'phys',x:'แม่เหล็ก, ฟาราเดย์'},{s:'chem',x:'เคมีไฟฟ้า'},{s:'bio',x:'สืบพันธุ์พืช, ฮอร์โมนพืช'},{s:'tpat',x:'เชื่อมโยง 2 บทความ/สัปดาห์'},{s:'tgat',x:'TGAT1: Text Completion'},{s:'tpat3',x:'ข้อสอบเก่า TPAT3 ชุดแรก'}]},
+],
+3:[
+{lb:'ก.ค.70',t:[{s:'math',x:'★ โจทย์: สถิติ, แคลคูลัส'},{s:'phys',x:'★ โจทย์: กลศาสตร์รวม'},{s:'chem',x:'★ โจทย์: ปริมาณสาร, อินทรีย์'},{s:'bio',x:'★ โจทย์: พันธุศาสตร์'},{s:'eng',x:'Reading จับเวลา 40 ข้อ'},{s:'thai',x:'เริ่ม: จับใจความ, ตีความ'},{s:'tgat',x:'TGAT2: Mock เต็มชุด'},{s:'tpat3',x:'โจทย์เชิงกล+ของไหล'}]},
+{lb:'ส.ค.70',t:[{s:'math',x:'★ โจทย์: อนุกรม, ตรีโกณ'},{s:'phys',x:'★ โจทย์: คลื่น, แสง'},{s:'chem',x:'★ โจทย์: สมดุล, อัตรา'},{s:'bio',x:'★ โจทย์: ระบบร่างกาย'},{s:'soc',x:'เริ่ม: เศรษฐศาสตร์'},{s:'tpat',x:'จริยธรรมแพทย์ 4 หลัก'},{s:'tgat',x:'TGAT3: EQ + Civic'},{s:'tpat3',x:'โจทย์ภาพ 3 ด้าน + บล็อก'}]},
+{lb:'ก.ย.70',t:[{s:'math',x:'★ โจทย์: ภาคตัดกรวย, เมทริกซ์'},{s:'phys',x:'★ โจทย์: ไฟฟ้า, แม่เหล็ก'},{s:'chem',x:'★ โจทย์: กรด-เบส, ไฟฟ้าเคมี'},{s:'bio',x:'★ โจทย์: พืช, นิเวศ'},{s:'soc',x:'มหภาค, กฎหมาย, การเมือง'},{s:'thai',x:'น้ำเสียง, ข้อบกพร่อง'},{s:'tgat',x:'Mock TGAT รวม'},{s:'tpat3',x:'Flowchart + Mock TPAT3'}]},
+{lb:'ต.ค.70 (ปิดเทอม)',t:[{s:'math',x:'★ โจทย์รวมบทสายโหด'},{s:'phys',x:'★ อุดรอยรั่ว'},{s:'chem',x:'★ ข้อสอบเก่า'},{s:'bio',x:'★ ข้อสอบเก่า'},{s:'soc',x:'ภูมิศาสตร์, ประวัติศาสตร์'},{s:'thai',x:'หลักภาษา, ราชาศัพท์'},{s:'tpat',x:'เชื่อมโยง 3+ บทความ/สัปดาห์'},{s:'tgat',x:'Mock TGAT เต็มชุด (300)'},{s:'tpat3',x:'Mock TPAT3 เต็มชุด'}]},
+{lb:'พ.ย.70',t:[{s:'math',x:'Mock คณิตเต็มชุด'},{s:'phys',x:'Mock ฟิสิกส์'},{s:'chem',x:'Mock เคมี'},{s:'bio',x:'Mock ชีวะ'},{s:'eng',x:'Mock อังกฤษ'},{s:'thai',x:'โจทย์เก่าไทย'},{s:'soc',x:'โจทย์เก่าสังคม'},{s:'tpat',x:'ข้อสอบเก่า กสพท'},{s:'tgat',x:'Mock TGAT ชุดสุดท้าย'},{s:'tpat3',x:'Mock TPAT3 ชุดสุดท้าย'}]},
+],
+4:[
+{lb:'ธ.ค.70 (🎯สอบ TGAT/TPAT)',t:[{s:'tpat',x:'🎯 สอบ TPAT1!'},{s:'tgat',x:'🎯 สอบ TGAT!'},{s:'tpat3',x:'🎯 สอบ TPAT3!'},{s:'math',x:'Mock + Error Log'},{s:'phys',x:'Mock + Error Log'},{s:'chem',x:'Mock + Error Log'},{s:'bio',x:'Mock + Error Log'},{s:'eng',x:'Speed Test 80 ข้อ'}]},
+{lb:'ม.ค.71 (โค้งสุดท้าย)',t:[{s:'math',x:'Mock 2-3 ชุด/สัปดาห์'},{s:'phys',x:'Mock + Supermap'},{s:'chem',x:'Mock + K-Map'},{s:'bio',x:'Mock + Bio-Map'},{s:'eng',x:'Mock เต็มชุด'},{s:'thai',x:'ทบทวนคีย์เวิร์ด'},{s:'soc',x:'ทบทวน+ข่าวปัจจุบัน'}]},
+{lb:'ก.พ.–มี.ค.71 (🎯สอบ A-Level)',t:[{s:'math',x:'🎯 สอบ A-Level!'},{s:'phys',x:'🎯 สอบ A-Level!'},{s:'chem',x:'🎯 สอบ A-Level!'},{s:'bio',x:'🎯 สอบ A-Level!'},{s:'eng',x:'🎯 สอบ A-Level!'},{s:'thai',x:'🎯 สอบ A-Level!'},{s:'soc',x:'🎯 สอบ A-Level!'}]},
+]};
+const WT={1:[{d:'จันทร์',sl:[{t:'17:30-19:00',s:'math',x:'คณิต (เนื้อหา+โจทย์)'},{t:'20:00-21:30',s:'eng',x:'ศัพท์+Reading'},{t:'21:30-22:30',s:'bio',x:'ชีวะ (Bio-Map)'}]},{d:'อังคาร',sl:[{t:'17:30-19:00',s:'phys',x:'ฟิสิกส์ (Supermap)'},{t:'20:00-21:30',s:'eng',x:'ศัพท์+Grammar'},{t:'21:30-22:30',s:'chem',x:'เคมี (บรรยาย)'}]},{d:'พุธ',sl:[{t:'17:30-19:00',s:'math',x:'คณิต (บททำเงิน)'},{t:'20:00-21:30',s:'eng',x:'ศัพท์+Conversation'},{t:'21:30-22:30',s:'bio',x:'ชีวะ (ระบบร่างกาย)'}]},{d:'พฤหัสบดี',sl:[{t:'17:30-19:00',s:'phys',x:'ฟิสิกส์ (คำนวณ)'},{t:'20:00-21:30',s:'eng',x:'ศัพท์+Reading'},{t:'21:30-22:30',s:'chem',x:'เคมี (คำนวณ/โมล)'}]},{d:'ศุกร์',sl:[{t:'17:30-19:00',s:'math',x:'คณิต (ทบทวน)'},{t:'20:00-21:30',s:'eng',x:'ศัพท์+Writing'},{t:'21:30-22:30',s:'phys',x:'ฟิสิกส์ (ทบทวน)'}]},{d:'เสาร์',sl:[{t:'09:00-11:30',s:'math',x:'คณิต (บทยาก)'},{t:'13:00-15:00',s:'chem',x:'เคมี (เชิงลึก)'},{t:'15:30-17:00',s:'tgat',x:'TGAT2: อนุกรม+มิติสัมพันธ์'},{t:'19:30-21:00',s:'eng',x:'ซ้อม Reading จับเวลา'}]},{d:'อาทิตย์',sl:[{t:'09:00-11:30',s:'phys',x:'ฟิสิกส์ (ล่วงหน้า)'},{t:'13:00-15:00',s:'bio',x:'ชีวะ (เนื้อหาใหม่)'},{t:'15:30-17:00',s:'tpat3',x:'TPAT3: เชิงกล+ภาพ 3 ด้าน'},{t:'21:00-21:30',s:'eng',x:'Error Log+ศัพท์'}]}],
+2:[{d:'จันทร์',sl:[{t:'09:00-11:30',s:'math',x:'แคลคูลัส'},{t:'13:00-15:00',s:'phys',x:'ไฟฟ้า'},{t:'15:30-17:00',s:'tpat',x:'เชาวน์ปัญญา'},{t:'19:30-21:00',s:'eng',x:'ศัพท์+Mock Reading'}]},{d:'อังคาร',sl:[{t:'09:00-11:30',s:'chem',x:'อินทรีย์/กรด-เบส'},{t:'13:00-15:00',s:'bio',x:'พืช (สังเคราะห์แสง)'},{t:'15:30-17:00',s:'tpat',x:'เชื่อมโยง 1 บทความ'},{t:'19:30-21:00',s:'math',x:'แคลคูลัส (โจทย์)'}]},{d:'พุธ',sl:[{t:'09:00-11:30',s:'phys',x:'ไฟฟ้ากระแสตรง'},{t:'13:00-15:00',s:'chem',x:'เคมีไฟฟ้า'},{t:'15:30-17:00',s:'tgat',x:'TGAT2: Mock จับเวลา'},{t:'19:30-21:00',s:'eng',x:'ซ้อมข้อสอบเก่า'}]},{d:'พฤหัสบดี',sl:[{t:'09:00-11:30',s:'math',x:'เมทริกซ์, เวกเตอร์'},{t:'13:00-15:00',s:'bio',x:'นิเวศ, วิวัฒนาการ'},{t:'15:30-17:00',s:'tpat3',x:'TPAT3: Flowchart+เชิงกล'},{t:'19:30-21:00',s:'phys',x:'แม่เหล็ก'}]},{d:'ศุกร์',sl:[{t:'09:00-11:30',s:'chem',x:'ทบทวน+โจทย์'},{t:'13:00-15:00',s:'math',x:'จำนวนเชิงซ้อน'},{t:'15:30-17:00',s:'tgat',x:'TGAT3: สมรรถนะทำงาน'},{t:'19:30-21:00',s:'eng',x:'Writing+Grammar'}]},{d:'เสาร์',sl:[{t:'09:00-11:30',s:'tpat',x:'ซ้อมเชื่อมโยงเต็มชุด'},{t:'13:00-15:00',s:'tgat',x:'TGAT2: ตรรกะ+คำนวณ'},{t:'15:30-17:00',s:'tpat3',x:'TPAT3: Mock ภาพ3ด้าน'},{t:'17:00-19:30',s:'rest',x:'🎮 Free Time'}]},{d:'อาทิตย์',sl:[{t:'09:00-11:30',s:'math',x:'ทบทวนรวม'},{t:'13:00-15:00',s:'bio',x:'ทบทวนชีวะ ม.6'},{t:'15:30-17:00',s:'tgat',x:'TGAT3: ข้อสอบเก่า'},{t:'21:00-21:30',s:'eng',x:'Error Log'}]}],
+3:[{d:'จันทร์',sl:[{t:'17:30-19:00',s:'math',x:'★ โจทย์แยกบท'},{t:'20:00-21:30',s:'eng',x:'Mock Reading'},{t:'21:30-22:30',s:'thai',x:'จับใจความ+ตีความ'}]},{d:'อังคาร',sl:[{t:'17:30-19:00',s:'phys',x:'★ โจทย์แยกบท'},{t:'20:00-21:30',s:'tgat',x:'TGAT2: Mock จับเวลา'},{t:'21:30-22:30',s:'soc',x:'เศรษฐศาสตร์'}]},{d:'พุธ',sl:[{t:'17:30-19:00',s:'chem',x:'★ โจทย์แยกบท'},{t:'20:00-21:30',s:'tpat',x:'จริยธรรม+เชื่อมโยง'},{t:'21:30-22:30',s:'thai',x:'หลักภาษา'}]},{d:'พฤหัสบดี',sl:[{t:'17:30-19:00',s:'bio',x:'★ โจทย์แยกบท'},{t:'20:00-21:30',s:'eng',x:'Mock เต็มชุด'},{t:'21:30-22:30',s:'soc',x:'กฎหมาย, การเมือง'}]},{d:'ศุกร์',sl:[{t:'17:30-19:00',s:'math',x:'★ โจทย์บทสายโหด'},{t:'20:00-21:30',s:'tpat',x:'เชาวน์+เชื่อมโยง'},{t:'21:30-22:30',s:'tpat3',x:'TPAT3: Mock'}]},{d:'เสาร์',sl:[{t:'09:00-11:00',s:'tpat',x:'ซ้อมเชื่อมโยงเต็มชุด'},{t:'11:00-12:30',s:'tgat',x:'Mock TGAT รวม'},{t:'13:30-15:00',s:'tpat3',x:'Mock TPAT3'},{t:'15:30-17:00',s:'thai',x:'โจทย์เก่าไทย'},{t:'19:30-21:00',s:'soc',x:'โจทย์เก่าสังคม'}]},{d:'อาทิตย์',sl:[{t:'09:00-11:30',s:'math',x:'★ Mock คณิตเต็มชุด'},{t:'13:00-15:00',s:'bio',x:'★ Mock ชีวะ/ฟิสิกส์'},{t:'15:30-17:00',s:'tgat',x:'TGAT3: สมรรถนะ'},{t:'21:00-21:30',s:'rest',x:'📝 Error Log สัปดาห์'}]}],
+4:[{d:'จันทร์',sl:[{t:'09:00-12:00',s:'math',x:'🎯 Mock เสมือนจริง'},{t:'13:00-15:00',s:'eng',x:'🎯 Mock 80 ข้อ'},{t:'15:30-17:00',s:'thai',x:'ทบทวน Error Log'},{t:'20:00-21:00',s:'rest',x:'📝 Error Log'}]},{d:'อังคาร',sl:[{t:'09:00-12:00',s:'phys',x:'🎯 Mock จับเวลา'},{t:'13:00-15:00',s:'chem',x:'🎯 Mock จับเวลา'},{t:'15:30-17:00',s:'soc',x:'ทบทวน Error Log'},{t:'20:00-21:00',s:'rest',x:'📝 Error Log'}]},{d:'พุธ',sl:[{t:'09:00-12:00',s:'bio',x:'🎯 Mock จับเวลา'},{t:'13:00-15:00',s:'math',x:'อุดรอยรั่ว'},{t:'15:30-17:00',s:'phys',x:'อุดรอยรั่ว'},{t:'20:00-21:00',s:'eng',x:'ทบทวนศัพท์+Idioms'}]},{d:'พฤหัสบดี',sl:[{t:'09:00-12:00',s:'chem',x:'อุดรอยรั่ว'},{t:'13:00-15:00',s:'bio',x:'อุดรอยรั่ว'},{t:'15:30-17:00',s:'tgat',x:'ทบทวน TGAT'},{t:'20:00-21:00',s:'tpat3',x:'ทบทวน TPAT3'}]},{d:'ศุกร์',sl:[{t:'09:00-12:00',s:'eng',x:'🎯 Mock+วิเคราะห์'},{t:'13:00-15:00',s:'thai',x:'Mock ไทย'},{t:'15:30-17:00',s:'soc',x:'Mock สังคม'},{t:'20:00-21:00',s:'math',x:'ทบทวนสูตร+Map'}]},{d:'เสาร์',sl:[{t:'09:00-12:00',s:'math',x:'🎯 Mock ชุดใหม่'},{t:'13:00-15:00',s:'phys',x:'Supermap รวม'},{t:'15:30-17:00',s:'chem',x:'K-Map รวม'},{t:'17:00-19:30',s:'rest',x:'🎮 พักผ่อน'}]},{d:'อาทิตย์',sl:[{t:'09:00-11:00',s:'bio',x:'Bio-Map สรุป'},{t:'11:00-12:00',s:'eng',x:'Idioms+ศัพท์รวม'},{t:'13:00-15:00',s:'rest',x:'📝 Error Log สัปดาห์'},{t:'15:00-22:00',s:'rest',x:'💤 พักผ่อนเต็มที่'}]}]
+};
+
+// ====== STATE ======
+const SK='tcas71_master_v1';
+let S=loadS();let unsaved=false;let curSec='checklist';let curCLSubj='math';let curCLFilter='all';let curPhase=1;let curView='monthly';let curWeek=0;
+function loadS(){try{return JSON.parse(localStorage.getItem(SK))||{cl:{},pl:{}};}catch{return{cl:{},pl:{}};}}
+function markUnsaved(){unsaved=true;document.getElementById('ubEl').classList.add('sh');document.getElementById('btnSave').classList.add('us');}
+function manualSave(){localStorage.setItem(SK,JSON.stringify(S));unsaved=false;document.getElementById('ubEl').classList.remove('sh');document.getElementById('btnSave').classList.remove('us');const t=document.getElementById('stEl');t.classList.add('sh');setTimeout(()=>t.classList.remove('sh'),1500);}
+function resetAll(){if(confirm('⚠️ รีเซ็ตข้อมูลทั้งหมด? ความก้าวหน้าจะหายหมด!')){S={cl:{},pl:{}};manualSave();render();}}
+window.addEventListener('beforeunload',e=>{if(unsaved){e.preventDefault();e.returnValue='';}});
+
+// ====== HELPERS ======
+function clStatus(id){return S.cl[id]||'not_started';}
+function clSet(id,v){S.cl[id]=v;markUnsaved();render();}
+function clToggle(id,checked){S.cl[id]=checked?'done':'not_started';markUnsaved();render();}
+function plKey(p,m,t){return `p${p}_m${m}_t${t}`;}
+function plDone(k){return S.pl[k]===true;}
+function plToggle(k){S.pl[k]=!S.pl[k];markUnsaved();render();}
+function wKey(p,w,d,s){return `p${p}_w${w}_d${d}_s${s}`;}
+
+// ====== PROGRESS ======
+function clSubjProg(sid){let t=0,d=0;const sub=CL_SUBJECTS.find(s=>s.id===sid);if(!sub)return{t:0,d:0,p:0};sub.cats.forEach(c=>c.items.forEach(i=>{t++;if(clStatus(i.id)==='done')d++;}));return{t,d,p:t?Math.round(d/t*100):0};}
+function plPhaseProg(pid){let t=0,d=0;(MD[pid]||[]).forEach((m,mi)=>m.t.forEach((tk,ti)=>{t++;if(plDone(plKey(pid,mi,ti)))d++;}));return{t,d,p:t?Math.round(d/t*100):0};}
+function overallProg(){let t=0,d=0;CL_SUBJECTS.forEach(s=>{const p=clSubjProg(s.id);t+=p.t;d+=p.d;});[1,2,3,4].forEach(pid=>{const p=plPhaseProg(pid);t+=p.t;d+=p.d;});return{t,d,p:t?Math.round(d/t*100):0};}
+
+// ====== RENDER ======
+function render(){renderDash();if(curSec==='checklist')renderCL();else renderPL();}
+function switchSec(s){curSec=s;document.getElementById('btnCL').classList.toggle('act',s==='checklist');document.getElementById('btnPL').classList.toggle('act',s==='planner');document.getElementById('secCL').classList.toggle('act',s==='checklist');document.getElementById('secPL').classList.toggle('act',s==='planner');render();}
+function renderDash(){const el=document.getElementById('dashEl');const all=CL_SUBJECTS.map(s=>{const p=clSubjProg(s.id);return`<div class="dc"><div class="dl">${s.icon} ${s.name}</div><div class="dv" style="color:${s.color}">${p.p}%</div><div class="db"><div class="df" style="width:${p.p}%;background:${s.color}"></div></div></div>`;});const ov=overallProg();el.innerHTML=`<div class="dc" style="border-color:#6c5ce7"><div class="dl">📊 รวมทั้งหมด</div><div class="dv" style="color:#a29bfe">${ov.p}%</div><div class="db"><div class="df" style="width:${ov.p}%;background:#6c5ce7"></div></div></div>`+all.join('');}
+
+// ====== CHECKLIST RENDER ======
+function renderCL(){const el=document.getElementById('secCL');let h='<div class="ctabs">';CL_SUBJECTS.forEach(s=>{h+=`<button class="ctab ${s.tab} ${s.id===curCLSubj?'act':''}" onclick="switchCLSubj('${s.id}')">${s.icon} ${s.name}</button>`;});h+='</div><div class="cfilts">';
+['all','easy','medium','hard','incomplete'].forEach(f=>{const lbl={all:'ทั้งหมด',easy:'🟢 เก็บง่าย',medium:'🟡 ออกเยอะ',hard:'🔴 สายโหด',incomplete:'⬜ ยังไม่เสร็จ'}[f];h+=`<button class="cflt ${curCLFilter===f?'act':''}" onclick="switchCLFilter('${f}')">${lbl}</button>`;});h+='</div>';
+const sub=CL_SUBJECTS.find(s=>s.id===curCLSubj);if(sub){if(sub.info)h+=`<div style="background:rgba(255,255,255,.04);border-radius:8px;padding:10px 14px;margin-bottom:14px;border-left:3px solid ${sub.color};font-size:.75rem;color:#aaa;line-height:1.5"><strong style="color:${sub.color}">${sub.icon} ${sub.name}</strong> — ${sub.info}</div>`;sub.cats.forEach(cat=>{if(['easy','medium','hard'].includes(curCLFilter)&&curCLFilter!==cat.g)return;const items=curCLFilter==='incomplete'?cat.items.filter(i=>clStatus(i.id)!=='done'):cat.items;if(items.length===0)return;
+let done=items.filter(i=>clStatus(i.id)==='done').length;const pct=items.length?Math.round(done/items.length*100):0;
+const bc=cat.g==='easy'?'be':cat.g==='medium'?'bm':'bh';const fc=cat.g==='easy'?'fe':cat.g==='medium'?'fm':'fh';
+h+=`<div class="ccat"><div class="cch"><span class="cct">${cat.title}</span><span class="ccb ${bc}">${cat.g==='easy'?'🟢 เก็บง่าย':cat.g==='medium'?'🟡 ออกเยอะ':'🔴 สายโหด'}</span><span class="ccp">${done}/${items.length}</span></div><div class="cpb"><div class="cpf ${fc}" style="width:${pct}%"></div></div>`;
+items.forEach(i=>{const st=clStatus(i.id);const dn=st==='done';h+=`<div class="ci ${dn?'dn':''}"><input type="checkbox" ${dn?'checked':''} onchange="clToggle('${i.id}',this.checked)"><label><div>${i.l}</div><div class="cd">${i.d}</div></label><select class="cl-status" onchange="clSet('${i.id}',this.value)"><option value="not_started" ${st==='not_started'?'selected':''}>⬜ ยังไม่เริ่ม</option><option value="in_progress" ${st==='in_progress'?'selected':''}>🔄 กำลังอ่าน</option><option value="review" ${st==='review'?'selected':''}>📝 ทบทวน</option><option value="done" ${st==='done'?'selected':''}>✅ เสร็จแล้ว</option></select></div>`;});h+='</div>';});}
+el.innerHTML=h;}
+function switchCLSubj(id){curCLSubj=id;renderCL();}
+function switchCLFilter(f){curCLFilter=f;renderCL();}
+
+// ====== PLANNER RENDER ======
+function renderPL(){const el=document.getElementById('secPL');let h='<div class="ptabs">';PHASES.forEach(p=>{const pp=plPhaseProg(p.id);h+=`<button class="ptab ${p.id===curPhase?'act':''}" style="${p.id===curPhase?'background:'+p.color:''}" onclick="switchPhase(${p.id})">${p.badge} (${pp.p}%)</button>`;});h+='</div><div class="pvtabs">';
+['monthly','weekly','daily'].forEach(v=>{const lbl={monthly:'📅 รายเดือน',weekly:'📆 รายสัปดาห์',daily:'⏰ รายวัน'}[v];h+=`<button class="pvt ${curView===v?'act':''}" onclick="switchView('${v}')">${lbl}</button>`;});h+='</div>';
+// Subject progress for phase
+const months=MD[curPhase]||[];const phase=PHASES.find(p=>p.id===curPhase);
+h+='<div class="spg">';PL_SUBJECTS.forEach(s=>{if(s.id==='rest')return;let t=0,d=0;months.forEach((m,mi)=>m.t.forEach((tk,ti)=>{if(tk.s===s.id){t++;if(plDone(plKey(curPhase,mi,ti)))d++;}}));if(!t)return;const p=Math.round(d/t*100);h+=`<div class="spc" style="border-color:${s.color}"><div class="sn" style="color:${s.color}">${s.icon} ${s.name}</div><div class="sb"><div class="sf" style="width:${p}%;background:${s.color}"></div></div><div class="sp">${d}/${t} (${p}%)</div></div>`;});h+='</div>';
+if(curView==='monthly')h+=renderMonthly(months,phase);
+else if(curView==='weekly')h+=renderWeekly(phase);
+else h+=renderDaily(phase);
+el.innerHTML=h;}
+function switchPhase(p){curPhase=p;curWeek=0;renderPL();}
+function switchView(v){curView=v;renderPL();}
+
+function renderMonthly(months,phase){let h='';months.forEach((m,mi)=>{const done=m.t.filter((_,ti)=>plDone(plKey(curPhase,mi,ti))).length;const pct=m.t.length?Math.round(done/m.t.length*100):0;h+=`<div class="pmb"><h4>${m.lb} <span style="float:right;font-size:.7rem;color:#888">${done}/${m.t.length} (${pct}%)</span></h4><div class="pmbr"><div class="pmbf" style="width:${pct}%;background:${phase.color}"></div></div>`;
+m.t.forEach((tk,ti)=>{const k=plKey(curPhase,mi,ti);const d=plDone(k);const sub=PL_SUBJECTS.find(s=>s.id===tk.s);const tc=sub?sub.tc:'t-rest';h+=`<div class="pt ${d?'dn':''}"><div class="pc ${d?'ck':''}" onclick="plToggle('${k}')"></div><span class="tg ${tc}">${sub?sub.icon:''} ${sub?sub.name:'พัก'}</span><span class="ptx">${tk.x}</span></div>`;});h+='</div>';});return h;}
+
+function renderWeekly(phase){const tmpl=WT[curPhase]||[];let wt=0,wd=0;tmpl.forEach((day,di)=>day.sl.forEach((_,si)=>{wt++;if(plDone(wKey(curPhase,curWeek,di,si)))wd++;}));const wp=wt?Math.round(wd/wt*100):0;
+let h=`<div class="wnav"><button onclick="chgWeek(-1)">◀</button><span style="font-size:.8rem;color:#ccc">สัปดาห์ ${curWeek+1} — ${wp}% (${wd}/${wt})</span><button onclick="chgWeek(1)">▶</button></div>`;
+h+=`<div style="height:4px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-bottom:12px"><div style="height:100%;width:${wp}%;background:${phase.color};border-radius:2px"></div></div>`;
+h+='<div class="wgrid">';tmpl.forEach((day,di)=>{h+=`<div class="wcell"><div class="wdn" style="color:${phase.color}">${day.d}</div>`;day.sl.forEach((sl,si)=>{const k=wKey(curPhase,curWeek,di,si);const d=plDone(k);const sub=PL_SUBJECTS.find(s=>s.id===sl.s);h+=`<div class="wsl" onclick="plToggle('${k}')"><div class="wdot ${d?'ck':''}"></div><span class="tg ${sub?sub.tc:'t-rest'}">${sub?sub.icon:''}</span><span>${sl.t.split('-')[0]}</span></div>`;});h+='</div>';});h+='</div>';
+// Detail below
+tmpl.forEach((day,di)=>{h+=`<div class="pmb"><h4 style="color:${phase.color}">📌 ${day.d}</h4>`;day.sl.forEach((sl,si)=>{const k=wKey(curPhase,curWeek,di,si);const d=plDone(k);const sub=PL_SUBJECTS.find(s=>s.id===sl.s);h+=`<div class="dsl"><div class="dt">${sl.t}</div><div class="dc2"><div class="dsn" style="color:${sub?sub.color:'#636e72'}">${sub?sub.icon+' '+sub.name:'🛌 พัก'}</div><div class="dsd" style="${d?'text-decoration:line-through':''}">${sl.x}</div></div><div class="dck ${d?'ck':''}" onclick="plToggle('${k}')"></div></div>`;});h+='</div>';});return h;}
+function chgWeek(delta){curWeek=Math.max(0,curWeek+delta);renderPL();}
+
+function renderDaily(phase){const tmpl=WT[curPhase]||[];const dow=new Date().getDay();const map=[6,0,1,2,3,4,5];const idx=map[dow];const day=tmpl[idx];if(!day)return'<p style="text-align:center;color:#888;padding:30px">ไม่มีตาราง</p>';
+const dn=['อาทิตย์','จันทร์','อังคาร','พุธ','พฤหัสบดี','ศุกร์','เสาร์'];const tm=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];const now=new Date();const ds=`${now.getDate()} ${tm[now.getMonth()]} ${now.getFullYear()+543}`;
+let dt=day.sl.length,dd=day.sl.filter((_,si)=>plDone(wKey(curPhase,curWeek,idx,si))).length;const dp=dt?Math.round(dd/dt*100):0;
+let h=`<div class="dly"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div><div style="font-size:.95rem;font-weight:700;color:${phase.color}">📌 วัน${dn[dow]} (${ds})</div><div style="font-size:.7rem;color:#888;margin-top:2px">${phase.badge}</div></div><div style="text-align:right"><div style="font-size:1.3rem;font-weight:800;color:${phase.color}">${dp}%</div><div style="font-size:.65rem;color:#888">${dd}/${dt}</div></div></div>`;
+h+=`<div style="height:5px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-bottom:14px"><div style="height:100%;width:${dp}%;background:${phase.color};border-radius:2px"></div></div>`;
+day.sl.forEach((sl,si)=>{const k=wKey(curPhase,curWeek,idx,si);const d=plDone(k);const sub=PL_SUBJECTS.find(s=>s.id===sl.s);h+=`<div class="dsl" style="${d?'opacity:.5':''}"><div class="dt">${sl.t}</div><div class="dc2"><div class="dsn" style="color:${sub?sub.color:'#636e72'}">${sub?sub.icon+' '+sub.name:'🛌 พัก'}</div><div class="dsd" style="${d?'text-decoration:line-through':''}">${sl.x}</div></div><div class="dck ${d?'ck':''}" onclick="plToggle('${k}')"></div></div>`;});
+h+='</div>';
+h+='<div style="margin-top:14px;display:flex;gap:5px;flex-wrap:wrap">';tmpl.forEach((dy,di)=>{const a=di===idx;h+=`<button style="padding:5px 10px;border-radius:6px;border:1px solid ${a?phase.color:'rgba(255,255,255,.1)'};background:${a?phase.color+'33':'transparent'};color:${a?phase.color:'#aaa'};cursor:pointer;font-size:.7rem" onclick="showDay(${di})">${dy.d}</button>`;});h+='</div>';return h;}
+function showDay(idx){const phase=PHASES.find(p=>p.id===curPhase);const tmpl=WT[curPhase]||[];const day=tmpl[idx];if(!day)return;
+let dd=day.sl.filter((_,si)=>plDone(wKey(curPhase,curWeek,idx,si))).length;const dp=day.sl.length?Math.round(dd/day.sl.length*100):0;
+let h=`<div class="dly"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px"><div style="font-size:.95rem;font-weight:700;color:${phase.color}">📌 ${day.d} (${phase.badge})</div><div style="font-size:1.2rem;font-weight:800;color:${phase.color}">${dp}%</div></div>`;
+h+=`<div style="height:5px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden;margin-bottom:14px"><div style="height:100%;width:${dp}%;background:${phase.color};border-radius:2px"></div></div>`;
+day.sl.forEach((sl,si)=>{const k=wKey(curPhase,curWeek,idx,si);const d=plDone(k);const sub=PL_SUBJECTS.find(s=>s.id===sl.s);h+=`<div class="dsl" style="${d?'opacity:.5':''}"><div class="dt">${sl.t}</div><div class="dc2"><div class="dsn" style="color:${sub?sub.color:'#636e72'}">${sub?sub.icon+' '+sub.name:'🛌 พัก'}</div><div class="dsd" style="${d?'text-decoration:line-through':''}">${sl.x}</div></div><div class="dck ${d?'ck':''}" onclick="plToggle('${k}')"></div></div>`;});h+='</div>';
+h+='<div style="margin-top:14px;display:flex;gap:5px;flex-wrap:wrap">';tmpl.forEach((dy,di)=>{const a=di===idx;h+=`<button style="padding:5px 10px;border-radius:6px;border:1px solid ${a?phase.color:'rgba(255,255,255,.1)'};background:${a?phase.color+'33':'transparent'};color:${a?phase.color:'#aaa'};cursor:pointer;font-size:.7rem" onclick="showDay(${di})">${dy.d}</button>`;});h+='</div>';
+document.getElementById('secPL').innerHTML=document.getElementById('secPL').innerHTML.split('<div class="dly">')[0]+h;}
+
+// Init
+render();
+</script>
+</body>
+</html>
